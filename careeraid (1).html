@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerAid – AI-Powered Career Guidance</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #faf8f3;
+    --cream: #f2eed9;
+    --saffron: #e8820c;
+    --saffron-light: #f5a94e;
+    --green: #1a6b3a;
+    --green-light: #2c9a56;
+    --navy: #1b2d4f;
+    --muted: #6b6660;
+    --border: #d9d3be;
+    --radius: 4px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 6vw;
+    background: rgba(250,248,243,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    animation: slideDown .6s ease forwards;
+  }
+  @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 900; letter-spacing: -0.5px; color: var(--ink); text-decoration: none; }
+  .logo span { color: var(--saffron); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: .9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--saffron); }
+  .nav-cta { background: var(--saffron); color: #fff; border: none; padding: 10px 22px; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .875rem; cursor: pointer; transition: background .2s, transform .15s; }
+  .nav-cta:hover { background: var(--saffron-light); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; padding: 120px 6vw 80px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; gap: 60px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -120px; right: -80px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(232,130,12,0.12) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -60px; left: 10%;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(26,107,58,0.1) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none;
+  }
+  .hero-badge { display: inline-block; background: var(--cream); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; font-size: .78rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--green); margin-bottom: 24px; animation: fadeUp .7s .2s both; }
+  .hero-headline { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--ink); margin-bottom: 24px; animation: fadeUp .7s .35s both; }
+  .hero-headline em { font-style: normal; color: var(--saffron); }
+  .hero-sub { font-size: 1.1rem; line-height: 1.7; color: var(--muted); max-width: 480px; margin-bottom: 40px; animation: fadeUp .7s .5s both; }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; animation: fadeUp .7s .65s both; }
+  .btn-primary { background: var(--saffron); color: #fff; border: none; padding: 14px 28px; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all .2s; box-shadow: 0 4px 20px rgba(232,130,12,.35); }
+  .btn-primary:hover { background: var(--saffron-light); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,130,12,.4); }
+  .btn-secondary { background: transparent; color: var(--ink); border: 1.5px solid var(--border); padding: 14px 28px; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all .2s; }
+  .btn-secondary:hover { border-color: var(--saffron); color: var(--saffron); transform: translateY(-2px); }
+  .hero-visual { animation: fadeUp .7s .4s both; position: relative; }
+  .hero-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); position: relative; }
+  .card-label { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 16px; }
+  .match-bar-wrap { margin-bottom: 14px; }
+  .match-label { display: flex; justify-content: space-between; font-size: .85rem; font-weight: 500; margin-bottom: 6px; }
+  .match-bar { height: 8px; background: var(--cream); border-radius: 4px; overflow: hidden; }
+  .match-fill { height: 100%; border-radius: 4px; width: 0; transition: width 1.2s ease; }
+  .match-fill.f1 { background: var(--saffron); }
+  .match-fill.f2 { background: var(--green); }
+  .match-fill.f3 { background: var(--navy); }
+  .hero-tag { position: absolute; top: -18px; right: 30px; background: var(--green); color: #fff; font-size: .78rem; font-weight: 700; padding: 8px 14px; border-radius: 20px; letter-spacing: .04em; }
+  .hero-stat-row { display: flex; gap: 24px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .hero-stat strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--ink); }
+  .hero-stat span { font-size: .78rem; color: var(--muted); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION COMMON */
+  section { padding: 90px 6vw; }
+  .section-label { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--saffron); margin-bottom: 14px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.5px; color: var(--ink); margin-bottom: 20px; }
+  .section-sub { font-size: 1rem; color: var(--muted); line-height: 1.7; max-width: 520px; }
+
+  /* HOW IT WORKS */
+  .hiw { background: var(--cream); }
+  .hiw-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .steps { margin-top: 48px; display: flex; flex-direction: column; gap: 0; }
+  .step { display: flex; gap: 24px; align-items: flex-start; padding: 28px 0; border-bottom: 1px solid var(--border); transition: all .2s; cursor: default; }
+  .step:last-child { border-bottom: none; }
+  .step:hover .step-num { background: var(--saffron); color: #fff; }
+  .step-num { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.1rem; color: var(--ink); transition: all .25s; margin-top: 2px; }
+  .step-text strong { display: block; font-size: 1rem; font-weight: 600; margin-bottom: 5px; color: var(--ink); }
+  .step-text p { font-size: .875rem; color: var(--muted); line-height: 1.6; }
+  .hiw-visual { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 40px 36px; box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+  .quiz-q { font-weight: 600; font-size: .95rem; margin-bottom: 16px; }
+  .quiz-opt { border: 1.5px solid var(--border); padding: 12px 16px; border-radius: var(--radius); font-size: .875rem; cursor: pointer; transition: all .2s; background: var(--paper); margin-bottom: 10px; }
+  .quiz-opt:hover { border-color: var(--saffron); background: rgba(232,130,12,.07); color: var(--saffron); font-weight: 500; }
+  .quiz-opt.active { border-color: var(--green); background: rgba(26,107,58,.07); color: var(--green); font-weight: 500; }
+
+  /* TRUST */
+  .trust { background: var(--navy); color: #fff; }
+  .trust .section-label { color: var(--saffron-light); }
+  .trust .section-title { color: #fff; }
+  .trust-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .trust-features { margin-top: 40px; display: flex; flex-direction: column; gap: 22px; }
+  .trust-feat { display: flex; align-items: flex-start; gap: 16px; padding: 20px; border-radius: 8px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); transition: background .2s; }
+  .trust-feat:hover { background: rgba(255,255,255,.1); }
+  .feat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .feat-icon.s { background: rgba(232,130,12,.2); }
+  .feat-icon.i { background: rgba(26,107,58,.3); }
+  .feat-icon.r { background: rgba(255,255,255,.12); }
+  .trust-feat-text strong { display: block; font-size: .95rem; font-weight: 600; margin-bottom: 3px; }
+  .trust-feat-text p { font-size: .82rem; color: rgba(255,255,255,.55); line-height: 1.5; }
+  .trust-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .t-stat { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 28px 24px; text-align: center; }
+  .t-stat strong { display: block; font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; color: var(--saffron-light); margin-bottom: 6px; }
+  .t-stat span { font-size: .8rem; color: rgba(255,255,255,.55); }
+
+  /* TESTIMONIALS */
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 52px; }
+  .testi-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 32px; position: relative; transition: all .25s; }
+  .testi-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.08); border-color: var(--saffron); }
+  .testi-card::before { content: '\201C'; font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--saffron); opacity: .2; position: absolute; top: 10px; left: 24px; line-height: 1; }
+  .testi-text { font-size: .95rem; line-height: 1.7; color: var(--ink); margin-bottom: 24px; padding-top: 20px; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .testi-avatar { width: 40px; height: 40px; border-radius: 50%; font-size: .9rem; font-weight: 700; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+  .av1 { background: var(--saffron); }
+  .av2 { background: var(--green); }
+  .av3 { background: var(--navy); }
+  .testi-info strong { display: block; font-size: .875rem; font-weight: 600; }
+  .testi-info span { font-size: .78rem; color: var(--muted); }
+  .stars { color: var(--saffron); font-size: .85rem; margin-bottom: 10px; }
+
+  /* SERVICES */
+  .services { background: var(--cream); }
+  .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 52px; }
+  .service-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 36px; transition: all .25s; position: relative; overflow: hidden; }
+  .service-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--saffron), var(--green)); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
+  .service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,.09); }
+  .service-card:hover::after { transform: scaleX(1); }
+  .service-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
+  .si1 { background: rgba(232,130,12,.12); }
+  .si2 { background: rgba(26,107,58,.12); }
+  .service-card h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+  .service-card p { font-size: .875rem; color: var(--muted); line-height: 1.7; }
+  .services-btns { display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap; }
+
+  /* LEAD */
+  .lead { background: #fff; }
+  .lead-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .lead-form-wrap { background: var(--paper); border: 1px solid var(--border); border-radius: 12px; padding: 40px; }
+  .form-grid { display: flex; flex-direction: column; gap: 18px; margin-top: 28px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-field { display: flex; flex-direction: column; gap: 6px; }
+  .form-field label { font-size: .8rem; font-weight: 600; color: var(--ink); letter-spacing: .03em; }
+  .form-field input, .form-field select { border: 1.5px solid var(--border); background: #fff; border-radius: var(--radius); padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--ink); outline: none; transition: border-color .2s; }
+  .form-field input:focus, .form-field select:focus { border-color: var(--saffron); }
+  .form-field select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6660' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .btn-form { width: 100%; background: var(--saffron); color: #fff; border: none; padding: 15px; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all .2s; margin-top: 6px; box-shadow: 0 4px 18px rgba(232,130,12,.3); letter-spacing: .02em; }
+  .btn-form:hover { background: #c96d06; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,130,12,.4); }
+  .lead-benefits { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .lead-benefit { display: flex; align-items: center; gap: 10px; font-size: .82rem; color: var(--muted); }
+  .lead-benefit::before { content: '✓'; color: var(--green); font-weight: 700; font-size: .9rem; }
+  .lead-points { margin-top: 36px; display: flex; flex-direction: column; gap: 28px; }
+  .lead-point { display: flex; gap: 16px; }
+  .lp-icon { width: 44px; height: 44px; flex-shrink: 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+  .lpi1 { background: rgba(232,130,12,.1); }
+  .lpi2 { background: rgba(26,107,58,.1); }
+  .lpi3 { background: rgba(27,45,79,.08); }
+  .lp-text strong { display: block; font-size: .95rem; font-weight: 600; margin-bottom: 4px; }
+  .lp-text p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+  /* FOOTER */
+  footer { background: var(--ink); color: rgba(255,255,255,.5); padding: 36px 6vw; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: #fff; }
+  .footer-logo span { color: var(--saffron-light); }
+  .footer-copy { font-size: .82rem; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: rgba(255,255,255,.5); text-decoration: none; font-size: .82rem; transition: color .2s; }
+  .footer-links a:hover { color: var(--saffron-light); }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .65s, transform .65s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero, .hiw-inner, .trust-inner, .lead-inner { grid-template-columns: 1fr; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .trust-stats { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    nav .nav-links { display: none; }
+    .hero-visual { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">Career<span>Aid</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#testimonials">Stories</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta">Start Free Test</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🇮🇳 Built for India's Students</div>
+    <h1 class="hero-headline">Confused About<br><em>Your Career?</em></h1>
+    <p class="hero-sub">Get AI-powered career guidance tailored according to the Indian academic setup and job market — from JEE to MBA to your first job offer.</p>
+    <div class="hero-btns">
+      <button class="btn-primary">Start Free Career Test</button>
+      <button class="btn-secondary">Explore Career Paths →</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-tag">✦ AI Match Report</div>
+      <div class="card-label">Your Career Compatibility</div>
+      <div class="match-bar-wrap">
+        <div class="match-label"><span>Finance &amp; Investment Banking</span><span style="color:var(--saffron);font-weight:700">88%</span></div>
+        <div class="match-bar"><div class="match-fill f1" data-width="88"></div></div>
+      </div>
+      <div class="match-bar-wrap">
+        <div class="match-label"><span>Product Management</span><span style="color:var(--green);font-weight:700">73%</span></div>
+        <div class="match-bar"><div class="match-fill f2" data-width="73"></div></div>
+      </div>
+      <div class="match-bar-wrap">
+        <div class="match-label"><span>Civil Services (UPSC)</span><span style="color:var(--navy);font-weight:700">60%</span></div>
+        <div class="match-bar"><div class="match-fill f3" data-width="60"></div></div>
+      </div>
+      <div class="hero-stat-row">
+        <div class="hero-stat"><strong>5,000+</strong><span>Students guided</span></div>
+        <div class="hero-stat"><strong>92%</strong><span>Satisfaction rate</span></div>
+        <div class="hero-stat"><strong>48h</strong><span>Avg clarity time</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="hiw reveal" id="how">
+  <div class="hiw-inner">
+    <div>
+      <div class="section-label">Process</div>
+      <h2 class="section-title">How We Make<br>Your Work Easy</h2>
+      <p class="section-sub">A three-step system designed for the unique pressures of the Indian academic and professional landscape.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Take the Career Quiz</strong><p>Answer 15 smart questions about your interests, strengths, and goals — built around Indian streams and opportunities.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Get Personalised Insights</strong><p>Our AI maps your profile against real market data — salary ranges, growth curves, and demand trends in India.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Receive Your Career Roadmap</strong><p>A step-by-step, actionable plan — with exams to take, skills to build, and timelines that make sense for you.</p></div></div>
+      </div>
+    </div>
+    <div class="hiw-visual">
+      <div class="card-label" style="margin-bottom:20px">📋 Sample Quiz Question</div>
+      <div class="quiz-q">Which of these sounds most like you on a good workday?</div>
+      <div class="quiz-opt active">📊 Analysing numbers and finding patterns</div>
+      <div class="quiz-opt">🎨 Creating something people will experience</div>
+      <div class="quiz-opt">🤝 Helping someone solve a real problem</div>
+      <div class="quiz-opt">🏗️ Building systems that scale</div>
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:.8rem;color:var(--muted)">Question 3 of 15</span>
+        <button style="background:var(--saffron);color:#fff;border:none;padding:10px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.875rem;cursor:pointer;">Next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust reveal">
+  <div class="trust-inner">
+    <div>
+      <div class="section-label">Why CareerAid</div>
+      <h2 class="section-title">Trusted by 5,000+ Students Across Top Indian Universities</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,.6)">From IITs and NITs to state colleges — we've helped students across every stream find direction.</p>
+      <div class="trust-features">
+        <div class="trust-feat"><div class="feat-icon s">📈</div><div class="trust-feat-text"><strong>Data-Driven Recommendations</strong><p>Every suggestion is backed by live market data, hiring trends, and salary benchmarks across Indian industries.</p></div></div>
+        <div class="trust-feat"><div class="feat-icon i">🏭</div><div class="trust-feat-text"><strong>Industry-Backed Insights</strong><p>Built with input from HR professionals, hiring managers, and career coaches working in the Indian market.</p></div></div>
+        <div class="trust-feat"><div class="feat-icon r">🗺️</div><div class="trust-feat-text"><strong>Personalised Career Roadmaps</strong><p>No generic advice — each plan is unique to your profile, stream, city, and ambitions.</p></div></div>
+      </div>
+    </div>
+    <div class="trust-stats">
+      <div class="t-stat"><strong>5K+</strong><span>Students Guided</span></div>
+      <div class="t-stat"><strong>92%</strong><span>Satisfaction Rate</span></div>
+      <div class="t-stat"><strong>50+</strong><span>Career Paths Mapped</span></div>
+      <div class="t-stat"><strong>30+</strong><span>Universities Covered</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials reveal" id="testimonials">
+  <div class="section-label" style="text-align:center">Student Stories</div>
+  <h2 class="section-title" style="text-align:center">What Fellow Students Say</h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"This platform helped me choose finance over engineering. I was so lost after B.Tech — CareerAid gave me the data and confidence to pivot, and I've never looked back."</p>
+      <div class="testi-author"><div class="testi-avatar av1">RK</div><div class="testi-info"><strong>Rahul K.</strong><span>B.Tech Graduate, IIT Bombay</span></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"Finally got clarity after years of confusion. My parents wanted me to go for UPSC, but CareerAid showed me product management was actually my strongest match."</p>
+      <div class="testi-author"><div class="testi-avatar av2">PS</div><div class="testi-info"><strong>Priya S.</strong><span>Final Year, Delhi University</span></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">"This is the best website to clear all career-related doubts. The roadmap was so specific — it told me exactly which certifications to do and which companies to target."</p>
+      <div class="testi-author"><div class="testi-avatar av3">AM</div><div class="testi-info"><strong>Arjun M.</strong><span>MBA Aspirant, Pune</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services reveal" id="services">
+  <div style="text-align:center;max-width:560px;margin:0 auto;">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Find Your Ideal<br>Career Path</h2>
+    <p class="section-sub" style="margin:0 auto">Two powerful tools designed specifically for the questions Indian students actually face.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card"><div class="service-icon si1">🎯</div><h3>Career Quiz</h3><p>Discover the best career for you based on your interests, personality, academic background, and real-world job market fit. Takes just 5 minutes.</p></div>
+    <div class="service-card"><div class="service-icon si2">⚖️</div><h3>MBA vs Stable Jobs vs Startup</h3><p>Compare completely different career paths and outcomes side by side — salaries, timelines, risks, and growth potential — all in the Indian context.</p></div>
+  </div>
+  <div class="services-btns">
+    <button class="btn-primary">Start Free Career Test</button>
+    <button class="btn-secondary">Explore Career Paths</button>
+  </div>
+</section>
+
+<!-- LEAD CAPTURE -->
+<section class="lead reveal" id="contact">
+  <div class="lead-inner">
+    <div class="lead-info" style="padding-top:12px">
+      <div class="section-label">Get Your Report</div>
+      <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.4rem)">Get Your Personalised Career Report</h2>
+      <p class="section-sub">Fill in your details and we'll send your custom career plan — built specifically for where you are right now.</p>
+      <div class="lead-points">
+        <div class="lead-point"><div class="lp-icon lpi1">📊</div><div class="lp-text"><strong>Detailed Career Match Analysis</strong><p>Your top 5 career paths with percentage compatibility and reasoning.</p></div></div>
+        <div class="lead-point"><div class="lp-icon lpi2">🗺️</div><div class="lp-text"><strong>Step-by-Step Roadmap</strong><p>Exams, skills, and timelines — customised to your stream and city.</p></div></div>
+        <div class="lead-point"><div class="lp-icon lpi3">💼</div><div class="lp-text"><strong>Industry Salary Benchmarks</strong><p>Real numbers from the Indian job market so you can plan ahead.</p></div></div>
+      </div>
+    </div>
+    <div class="lead-form-wrap">
+      <div class="section-label">Free — No Credit Card</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:4px;">Start Your Journey</h3>
+      <p style="font-size:.85rem;color:var(--muted)">Join 5,000+ students who found their direction</p>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="form-field"><label>Full Name</label><input type="text" placeholder="Rahul Sharma"></div>
+          <div class="form-field"><label>Email Address</label><input type="email" placeholder="rahul@email.com"></div>
+        </div>
+        <div class="form-field"><label>Phone Number</label><input type="tel" placeholder="+91 98765 43210"></div>
+        <div class="form-field">
+          <label>Current Status</label>
+          <select>
+            <option value="" disabled selected>Select your status</option>
+            <option>School Student (Class 11–12)</option>
+            <option>College Student (UG)</option>
+            <option>College Student (PG)</option>
+            <option>Working Professional</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Career Interest</label>
+          <select>
+            <option value="" disabled selected>What are you drawn to?</option>
+            <option>Finance &amp; Banking</option>
+            <option>Technology &amp; Engineering</option>
+            <option>Management &amp; MBA</option>
+            <option>Civil Services (UPSC)</option>
+            <option>Design &amp; Creative</option>
+            <option>Healthcare &amp; Medicine</option>
+            <option>Law &amp; Policy</option>
+            <option>Not Sure Yet</option>
+          </select>
+        </div>
+        <button class="btn-form">Get My Career Plan →</button>
+        <div class="lead-benefits">
+          <div class="lead-benefit">Free report, delivered to your inbox</div>
+          <div class="lead-benefit">No spam — we respect your time</div>
+          <div class="lead-benefit">Results in under 48 hours</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Career<span>Aid</span></div>
+  <div class="footer-copy">© 2026 CareerAid. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <a href="#">Privacy Policy</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Animate match bars on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.match-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }, 800);
+  });
+
+  // Quiz opt toggle
+  document.querySelectorAll('.quiz-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
